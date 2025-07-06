@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+  <meta charset="UTF-8">
+  <title>සිංහල භෞතික AI උදව්</title>
+  
+  <!-- Sinhala Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala&display=swap" rel="stylesheet">
+  
+  <!-- MathJax Config -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.min.js" defer></script>
+  
+  <style>
+    body {
+      font-family: 'Noto Sans Sinhala', sans-serif;
+      padding: 20px;
+    }
+    
+    input, button {
+      font-family: inherit;
+      font-size: 12px;
+      padding: 8px;
+    }
+    
+    #output {
+      margin-top: 20px;
+      background: #f9f9f9;
+      padding: 15px;
+      border: 1px solid #ddd;
+      white-space: pre-wrap;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <h2>භෞතික විද්‍යාව විෂය සඳහා AI උදව්</h2>
+  <input id="question" type="text" placeholder="ඔබගේ ප්‍ර්ශ්නය මෙහි Type කරන්න" value="" style="width: 400px;">
+  <button onclick="ask()">Send</button>
+  
+  <div id="output">ප්‍රතිචාර මෙහි පෙන්වයි...</div>
+  
+  <!-- Puter SDK -->
+  <script src="https://js.puter.com/v2/"></script>
+  
+  <script>
+    async function ask() {
+      const input = document.getElementById("question").value;
+      const outputElement = document.getElementById("output");
+      
+      outputElement.textContent = "සිතමින් පවතී...";
+      
+      try {
+        const messages = [
+          {
+            role: "system",
+            content: "ඔබ සිසුන්ට සිංහල භාෂාවෙන් භෞතික විෂය ගැටලු විසඳීම උගන්වන ගුරුවරයෙකි. සරලව, පියවරෙන් පියවරින්, උදව් කරන්න. ගණිත සූත්‍ර සඳහා LaTeX භාවිතා කරන්න: inline සඳහා $...$ සහ display සඳහා $$...$$"
+          },
+          {
+            role: "user",
+            content: input
+          }
+        ];
+        
+        const response = await puter.ai.chat(messages);
+        let content = response.message?.content || response;
+        
+        // Convert newlines to HTML breaks
+        content = content.replace(/\n/g, "<br>");
+        
+        outputElement.innerHTML = content;
+        
+        // Render MathJax
+        if (window.MathJax) {
+          MathJax.typesetPromise([outputElement]);
+        }
+      } catch (e) {
+        outputElement.textContent = "දෝෂයක් ඇතිවිය: " + e.message;
+      }
+    }
+  </script>
+</body>
+</html>
